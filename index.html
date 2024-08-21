@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda de Esquites</title>
+    <style>
+        /* Estilos CSS */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            color: #000000;
+            margin: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: #ffaa00;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgb(0, 83, 12);
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #000000;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        .card {
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgb(13, 59, 0);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .card h3 {
+            margin-top: 0;
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+        .card select {
+            margin-bottom: 10px;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        .card button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .card-bandeja {
+            background-color: #3aad4d; /* Verde claro */
+        }
+        .card-vaso {
+            background-color: #3aad4d; /* Verde claro */
+        }
+        .card button:hover {
+            opacity: 0.8;
+        }
+        .cart {
+            margin-top: 20px;
+        }
+        .cart h2 {
+            text-align: center;
+            color: #444;
+        }
+        .cart table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .cart table, .cart th, .cart td {
+            border: 1px solid #ddd;
+        }
+        .cart th, .cart td {
+            padding: 10px;
+            text-align: left;
+        }
+        .cart th {
+            background-color: #f7f7f7;
+        }
+        .cart .remove-btn {
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .cart .remove-btn:hover {
+            background-color: #c82333;
+        }
+        .total {
+            text-align: right;
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .pagination button {
+            padding: 8px 12px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: #fff;
+            transition: background-color 0.3s;
+        }
+        .pagination button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Skitland</h1>
+
+        <!-- Productos (Combos) -->
+        <div class="grid-container">
+            <div class="card card-bandeja">
+                <h3>Bandeja de Esquites - $2.50</h3>
+                <p>Esquite acompañado con diversos aderezos al gusto: ketchup, mayonesa, salsa negra, mostaza, salsa de queso, queso rallado, polvo de Takis.</p>
+                <select id="extras-bandeja">
+                    <option value="">Sin extra</option>
+                    <option value="ketchup">Ketchup</option>
+                    <option value="mayonesa">Mayonesa</option>
+                    <option value="salsa negra">Salsa negra</option>
+                    <option value="mostaza">Mostaza</option>
+                    <option value="salsa de queso">Salsa de queso</option>
+                    <option value="queso rallado">Queso rallado</option>
+                    <option value="polvo de Takis">Polvo de Takis</option>
+                </select>
+                <button onclick="agregarAlCarritoConExtra('Bandeja de Esquites', 2.50, 'extras-bandeja')">Agregar al carrito</button>
+            </div>
+            
+            <div class="card card-vaso">
+                <h3>Vaso de Esquites - $1.50</h3>
+                <p>Esquite acompañado con diversos aderezos al gusto: ketchup, mayonesa, salsa negra, mostaza, salsa de queso, queso rallado, polvo de Takis.</p>
+                <select id="extras-vaso">
+                    <option value="">Sin extra</option>
+                    <option value="ketchup">Ketchup</option>
+                    <option value="mayonesa">Mayonesa</option>
+                    <option value="salsa negra">Salsa negra</option>
+                    <option value="mostaza">Mostaza</option>
+                    <option value="salsa de queso">Salsa de queso</option>
+                    <option value="queso rallado">Queso rallado</option>
+                    <option value="polvo de Takis">Polvo de Takis</option>
+                </select>
+                <button onclick="agregarAlCarritoConExtra('Vaso de Esquites', 1.50, 'extras-vaso')">Agregar al carrito</button>
+            </div>
+        </div>
+
+        <!-- Carrito de Compras -->
+        <div class="cart">
+            <h2>Carrito de Compras</h2>
+            <div id="cart-tables">
+                <!-- Tablas del carrito se insertarán aquí -->
+            </div>
+            <div class="total" id="total">Total: $0.00</div>
+            <div class="pagination" id="pagination-controls">
+                <!-- Controles de paginación se insertarán aquí -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let actionCount = 0;
+        let itemsPerPage = 10;
+
+        function agregarAlCarritoConExtra(product, price, selectId) {
+            const extraSelect = document.getElementById(selectId);
+            const extra = extraSelect.value;
+            let finalPrice = price;
+            const extras = [];
+
+            if (extra) {
+                extras.push(extra);
+                finalPrice += 0.25;
+            }
+
+            const now = new Date();
+            const time = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+            cart.push({ product, extras, price: finalPrice, time });
+            actionCount++;
+            actualizarCarrito();
+        }
+
+        function eliminarDelCarrito(index) {
+            cart.splice(index, 1);
+            actionCount++;
+            actualizarCarrito();
+        }
+
+        function actualizarCarrito() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+            mostrarPaginas();
+        }
+
+        function mostrarPaginas() {
+            const cartTables = document.getElementById('cart-tables');
+            const paginationControls = document.getElementById('pagination-controls');
+            cartTables.innerHTML = '';
+            paginationControls.innerHTML = '';
+
+            const pages = Math.ceil(cart.length / itemsPerPage);
+            for (let i = 0; i < pages; i++) {
+                const table = document.createElement('table');
+                table.className = 'cart-table';
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Extras</th>
+                            <th>Hora</th>
+                            <th>Precio</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${cart.slice(i * itemsPerPage, (i + 1) * itemsPerPage).map((item, index) => `
+                            <tr>
+                                <td>${item.product}</td>
+                                <td>${item.extras.join(', ') || 'Ninguno'}</td>
+                                <td>${item.time}</td>
+                                <td>$${item.price.toFixed(2)}</td>
+                                <td><button class="remove-btn" onclick="eliminarDelCarrito(${i * itemsPerPage + index})">Eliminar</button></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                `;
+                cartTables.appendChild(table);
+            }
+
+            for (let i = 0; i < pages; i++) {
+                const button = document.createElement('button');
+                button.textContent = i + 1;
+                button.onclick = () => mostrarPagina(i);
+                paginationControls.appendChild(button);
+            }
+
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            document.getElementById('total').textContent = `Total: $${total.toFixed(2)}`;
+        }
+
+        function mostrarPagina(page) {
+            const cartTables = document.getElementById('cart-tables');
+            cartTables.innerHTML = '';
+
+            const table = document.createElement('table');
+            table.className = 'cart-table';
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Extras</th>
+                        <th>Hora</th>
+                        <th>Precio</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${cart.slice(page * itemsPerPage, (page + 1) * itemsPerPage).map((item, index) => `
+                        <tr>
+                            <td>${item.product}</td>
+                            <td>${item.extras.join(', ') || 'Ninguno'}</td>
+                            <td>${item.time}</td>
+                            <td>$${item.price.toFixed(2)}</td>
+                            <td><button class="remove-btn" onclick="eliminarDelCarrito(${page * itemsPerPage + index})">Eliminar</button></td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            `;
+            cartTables.appendChild(table);
+
+            document.querySelectorAll('.pagination button').forEach((btn, i) => {
+                btn.disabled = i === page;
+            });
+        }
+
+        // Cargar el carrito al cargar la página
+        mostrarPaginas();
+    </script>
+</body>
+</html>
