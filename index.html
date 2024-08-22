@@ -125,6 +125,8 @@
             background-color: #0056b3;
         }
     </style>
+    <!-- Incluimos la biblioteca xlsx para generar el archivo Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -149,7 +151,7 @@
             </div>
             
             <div class="card card-vaso">
-                <h3>Vaso de Esquites - $1.50</h3>
+                <h3>Vaso de Esquites - $1.75</h3>
                 <p>Esquite acompañado con diversos aderezos al gusto: ketchup, mayonesa, salsa negra, mostaza, salsa de queso, queso rallado, polvo de Takis.</p>
                 <select id="extras-vaso">
                     <option value="">Sin extra</option>
@@ -161,7 +163,7 @@
                     <option value="queso rallado">Queso rallado</option>
                     <option value="polvo de Takis">Polvo de Takis</option>
                 </select>
-                <button onclick="agregarAlCarritoConExtra('Vaso de Esquites', 1.50, 'extras-vaso')">Agregar al carrito</button>
+                <button onclick="agregarAlCarritoConExtra('Vaso de Esquites', 1.75, 'extras-vaso')">Agregar al carrito</button>
             </div>
         </div>
 
@@ -175,6 +177,8 @@
             <div class="pagination" id="pagination-controls">
                 <!-- Controles de paginación se insertarán aquí -->
             </div>
+            <!-- Botón para exportar el carrito -->
+            <button onclick="exportarCarrito()">Exportar Carrito a Excel</button>
         </div>
     </div>
 
@@ -291,6 +295,18 @@
             document.querySelectorAll('.pagination button').forEach((btn, i) => {
                 btn.disabled = i === page;
             });
+        }
+
+        function exportarCarrito() {
+            const ws = XLSX.utils.json_to_sheet(cart.map(item => ({
+                Producto: item.product,
+                Extras: item.extras.join(', ') || 'Ninguno',
+                Hora: item.time,
+                Precio: `$${item.price.toFixed(2)}`
+            })));
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Carrito");
+            XLSX.writeFile(wb, "carrito.xlsx");
         }
 
         // Cargar el carrito al cargar la página
